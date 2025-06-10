@@ -128,11 +128,11 @@ uninstall() {
         fi
         return 0
     fi
-    systemctl stop x-ui
-    systemctl disable x-ui
+    service stop x-ui
+    service disable x-ui
     rm /etc/systemd/system/x-ui.service -f
-    systemctl daemon-reload
-    systemctl reset-failed
+    service daemon-reload
+    service reset-failed
     rm /etc/x-ui/ -rf
     rm /usr/local/x-ui/ -rf
 
@@ -198,7 +198,7 @@ start() {
         echo ""
         LOGI "面板已运行，无需再次启动，如需重启请选择重启"
     else
-        systemctl start x-ui
+        service start x-ui
         sleep 2
         check_status
         if [[ $? == 0 ]]; then
@@ -219,7 +219,7 @@ stop() {
         echo ""
         LOGI "面板已停止，无需再次停止"
     else
-        systemctl stop x-ui
+        service stop x-ui
         sleep 2
         check_status
         if [[ $? == 1 ]]; then
@@ -235,7 +235,7 @@ stop() {
 }
 
 restart() {
-    systemctl restart x-ui
+    service restart x-ui
     sleep 2
     check_status
     if [[ $? == 0 ]]; then
@@ -249,14 +249,14 @@ restart() {
 }
 
 status() {
-    systemctl status x-ui -l
+    service status x-ui -l
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
 }
 
 enable() {
-    systemctl enable x-ui
+    service enable x-ui
     if [[ $? == 0 ]]; then
         LOGI "x-ui 设置开机自启成功"
     else
@@ -269,7 +269,7 @@ enable() {
 }
 
 disable() {
-    systemctl disable x-ui
+    service disable x-ui
     if [[ $? == 0 ]]; then
         LOGI "x-ui 取消开机自启成功"
     else
@@ -318,7 +318,7 @@ check_status() {
     if [[ ! -f /etc/systemd/system/x-ui.service ]]; then
         return 2
     fi
-    temp=$(systemctl status x-ui | grep Active | awk '{print $3}' | cut -d "(" -f2 | cut -d ")" -f1)
+    temp=$(service status x-ui | grep Active | awk '{print $3}' | cut -d "(" -f2 | cut -d ")" -f1)
     if [[ x"${temp}" == x"running" ]]; then
         return 0
     else
@@ -327,7 +327,7 @@ check_status() {
 }
 
 check_enabled() {
-    temp=$(systemctl is-enabled x-ui)
+    temp=$(service is-enabled x-ui)
     if [[ x"${temp}" == x"enabled" ]]; then
         return 0
     else
